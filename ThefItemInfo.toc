@@ -1,0 +1,6 @@
+## Interface: 90100
+## Author: Thef
+## Title: ThefItemInfo
+## Notes: Adds additional information to tooltips of items, e.g. the content phase.
+ThefItemInfoPhases.lua
+ThefItemInfo.lua
