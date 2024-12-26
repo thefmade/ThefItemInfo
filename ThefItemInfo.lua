@@ -1,5 +1,5 @@
--- Name: ThefItemItem
--- Revision: $Revision: 0.1.3 $
+-- Name: ThefItemInfo
+-- Revision: $Revision: 0.1.4 $
 -- Developed by: Thef (https://www.github.com/thefmade/ThefItemInfo)
 -- Description: Shows the content phase of an item
 
@@ -27,7 +27,7 @@ local function ThefItemInfoGetPhase(itemID)
     --  pvp trinkets, badge of justice
     if itemID > 34575 and itemID < 34581 then return 4; end
     --  pvp items, level 70 rare sets
-    if itemID > 35327 and itemID < 35417 and itemLevel == 115 then return 1; end
+    if itemID > 35327 and itemID < 35417 and itemLevel == 115 then return 2; end
     --  pvp items, season 1 late
     if itemID > 32449 and itemID < 32997 and itemLevel == 123 then return 1; end 
     --  pvp items, cloaks, badge of justice
@@ -44,14 +44,13 @@ local function ThefItemInfoGetPhase(itemID)
     if itemID < 31958 and itemLevel < 128 then return 1; end
     --  phase 2
     if itemID < 30861 and itemLevel < 142 then return 2; end
-    --  phase , ogri'la, items
+    --  phase 2, ogri'la, items
     if (itemID >= 32645 and itemID <= 32654) and itemLevel >= 105  then return 2; end
-    --  phase , ogri'la, gems
+    --  phase 2, ogri'la, gems
     if (itemID >= 32634 and itemID <= 32641) and itemLevel == 70 then return 2; end
     --  phase 3
     if itemID < 33006 then return 3; end
     --  hyjal summit, mace from trash
-    --  pvp items, season 3
     if itemID < 34541 and itemLevel > 140 then return 3; end
     --  phase 4
     if itemID < 34164 then return 4; end
@@ -70,7 +69,10 @@ end
 local function ThefItemInfoAddTooltipText(tooltip, itemLink)
     local itemID = GetItemID(itemLink)
 
-    local itemPhase = ThefItemInfoGetPhaseByTable(itemID)
+    local itemPhaseByTable = ThefItemInfoGetPhaseByTable(itemID)
+    local itemPhaseByGuess = ThefItemInfoGetPhase(itemID)
+
+    local itemPhase = itemPhaseByTable or itemPhaseByGuess
 
     --[[
     local itemDebug
@@ -92,7 +94,7 @@ local function ThefItemInfoAddTooltipText(tooltip, itemLink)
         --  only add detailed text if UberTooltips is activated in the interface options
         if ThefItemInfoIsDetailedTooltipsActivated() then
             --  todo: add translation table
-            tooltip:AddLine("Hinzugefügt in Phase " .. itemPhase .. ".")
+            tooltip:AddLine("Verfügbar seit Phase " .. itemPhase .. ".")
         end
 
         tooltip:Show() -- Ensure the tooltip updates and shows the new line
@@ -106,58 +108,58 @@ local function ThefItemInfoInfoLatch(self)
     ThefItemInfoAddTooltipText(self, itemLink)
 end
 
---[[
 local TooltipList = {
     --  standard tooltip
-    "GameTooltip",
+    GameTooltip,
+    --SmallTextTooltip,
     --  tooltip of linked items, with close button
-    "ItemRefTooltip",
+    ItemRefTooltip,
     --  shopping tooltip
-    "ShoppingTooltip",
+    --ShoppingTooltip,
+    ShoppingTooltip1,
+    ShoppingTooltip2,
     --  equip comparison tooltip
-    "ComparisonTooltip",
+    ComparisonTooltip,
     --  support for EQCompare
-    "EQCompareTooltip",
+    --EQCompareTooltip,
     --  support for takKompare
-    "tekKompareTooltip",
+    --tekKompareTooltip,
     --  support for LinkWrangler
-    "IRR_",
-    "LinkWrangler",
+    --IRR_,
+    --LinkWrangler,
     --  support for MultiTips
     --  support for Links
-    "LinksTooltip",
+    --LinksTooltip,
     --  support for AtlasLoot
-    "AtlasLootTooltip",
+    AtlasLootTooltip,
     --  support for ItemMagic
-    "ItemMagicTooltip",
+    --ItemMagicTooltip,
     --  support for Sniff
-    "SniffTooltip",
+    --SniffTooltip,
     --  support for LinkHeaven
-    "LH_",
+    --LH_,
     --  support for Mirror
-    "MirrorTooltip",
+    --MirrorTooltip,
     --  support for TooltipExchange
-    "TooltipExchange_TooltipShow",
+    --TooltipExchange_TooltipShow,
     --  support for AtlasQuest
-    "AtlasQuestTooltip"
+    --AtlasQuestTooltip
 }
+
+for _, tooltip in pairs(TooltipList) do
+    tooltip:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
+end
+
+--[[
+
+local function FrameCreationHook(frameType, name, parent, inheritFrame)
+    if frameType == "GameTooltip" and name == "ShoppingTooltip1" then
+        ChatFrame1:AddMessage("ShoppingTooltip1 erstellt!")
+        -- Hier kannst du zusätzliche Logik hinzufügen
+    end
+    ChatFrame1:AddMessage(frameType .. " created.")
+end
+
+hooksecurefunc("CreateFrame", FrameCreationHook)
+
 ]]
-
---  hook into the game tooltip
-GameTooltip:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
-
---  hook into the item reference tooltip
-ItemRefTooltip:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
-
---  hook into the shopping tooltips
-ShoppingTooltip1:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
-ShoppingTooltip2:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
-
---  hook into the equip comparison tooltip
---  ComparisonTooltip:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
-
---  hook into AtlasLoot tooltip
-AtlasLootTooltip:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
-
---  hook into AtlasQuest tooltip
---  AtlasQuestTooltip:HookScript("OnTooltipSetItem", ThefItemInfoInfoLatch)
