@@ -1,5 +1,5 @@
 -- Name: ThefItemInfo
--- Revision: $Revision: 0.1.4 $
+-- Revision: $Revision: 0.1.5 $
 -- Developed by: Thef (https://www.github.com/thefmade/ThefItemInfo)
 -- Description: Shows the content phase of an item
 
@@ -55,7 +55,8 @@ local function ThefItemInfoGetPhase(itemID)
     --  phase 4
     if itemID < 34164 then return 4; end
     --  phase 5
-    return 5
+    if itemLevel >= 115 return 5; end
+    return nil
 end
 
 --  Function to lookup the item phase
