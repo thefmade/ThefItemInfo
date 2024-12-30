@@ -20,6 +20,8 @@ end
 local function ThefItemInfoGetPhase(itemID)
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, invTexture = GetItemInfo(itemID)
 
+    if not itemLevel then return; end
+
     --  hyjal summit, reputation rings
     if itemID > 29293 and itemID < 29310 then return 3; end
     --  zul'aman, rings
